@@ -36,17 +36,11 @@ type Content struct {
 func main() {
 	appId := os.Getenv("ios_app_id")
 	feed := fetchFeed(appId)
-	fmt.Printf("count of entries: %d\n", len(feed.Entries))
-	for _, entry := range feed.Entries {
-		fmt.Printf(entry.toString())
-	}
+	PrintEntries(feed.Entries)
 
 	lastMinutes, _ := strconv.Atoi(os.Getenv("last_minutes"))
 	entries := feed.filterEntriesByLastMinutes(lastMinutes)
-	fmt.Printf("count of valid entries: %d\n", len(entries))
-	for _, entry := range entries {
-		fmt.Printf(entry.toString())
-	}
+	PrintEntries(entries)
 	
 	webhookUrl := os.Getenv("slack_incoming_webhook_url")
 	for _, entry := range entries {
@@ -164,4 +158,11 @@ func (e *Entry) toSlackPayloadJson() string {
 	}`
 	payload := fmt.Sprintf(payloadTemplate, e.Title, rating, e.Content[0].Body, authorAndDate)
 	return payload
+}
+
+func PrintEntries(entries []Entry) {
+	fmt.Printf("count of entries: %d\n", len(entries))
+	for _, entry := range entries {
+		fmt.Printf(entry.toString())
+	}
 }
