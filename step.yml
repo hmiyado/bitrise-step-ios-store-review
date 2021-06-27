@@ -75,7 +75,8 @@ inputs:
       value_options: []
   - last_minutes: 1440
     opts:
-      tilte: Last X minutes
+      title: "Last X minutes"
+      summary: last X minutes post to Slack
       description: |
         Reviews of last X minutes will be post to Slack.
         Default is 1440 (every day).
