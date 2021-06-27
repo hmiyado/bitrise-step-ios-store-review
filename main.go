@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func main() {
@@ -18,6 +19,11 @@ func main() {
 		fmt.Printf("Failed to get review from %s, error: %#v\n", app_url, err)
 		os.Exit(1)
 	} 
+	responseStatus := string(response.Status)
+	if !strings.Contains(responseStatus, "200") {
+		fmt.Printf("Response from ios store is not OK but: %s", responseStatus)
+		os.Exit(1)
+	}
  
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -26,9 +32,6 @@ func main() {
 	}
  
 	fmt.Println(string(body))
- 
-	//レスポンスのステータス
-	fmt.Println(string(response.Status))
 
 	//
 	// --- Step Outputs: Export Environment Variables for other Steps:
