@@ -41,8 +41,7 @@ func main() {
 	}
 
 	webhookUrl := os.Getenv("slack_incoming_webhook_url")
-	payload := "{\"text\": \"Hello, world.\"}"
-	http.Post(webhookUrl, "application/json", bytes.NewBuffer([]byte(payload)))
+	postToSlack(entries, webhookUrl)
 
 	// --- Exit codes:
 	// The exit code of your Step is very important. If you return
@@ -83,4 +82,9 @@ func fetchFeed(appId string) Feed {
 
 func (e *Entry) toString() string {
 	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
+}
+
+func postToSlack(entries []Entry, webhookUrl string) {
+	payload := "{\"text\": \"Hello, world.\"}"
+	http.Post(webhookUrl, "application/json", bytes.NewBuffer([]byte(payload)))
 }
