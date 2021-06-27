@@ -41,7 +41,12 @@ func main() {
 	}
 
 	webhookUrl := os.Getenv("slack_incoming_webhook_url")
-	postToSlack(entries, webhookUrl)
+	for i, entry := range feed.Entries {
+		postToSlack(entry, webhookUrl)
+		if i > 3 {
+			break
+		}
+	}
 
 	// --- Exit codes:
 	// The exit code of your Step is very important. If you return
@@ -84,7 +89,59 @@ func (e *Entry) toString() string {
 	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
 }
 
-func postToSlack(entries []Entry, webhookUrl string) {
-	payload := "{\"text\": \"Hello, world.\"}"
+func postToSlack(entry Entry, webhookUrl string) {
+	payload := entry.toSlackPayloadJson()
 	http.Post(webhookUrl, "application/json", bytes.NewBuffer([]byte(payload)))
+}
+
+func (e *Entry) toSlackPayloadJson() string {
+	rating := ""
+	if e.Rating == 0 {
+		rating = ":innocent:"
+	} else {
+		for i := 0; i < e.Rating; i++ {
+			rating += ":star: "
+		}	
+	}
+
+	// https://app.slack.com/block-kit-builder/
+	payloadTemplate := `{
+		"blocks": [
+			{
+				"type": "section",
+				"text": {
+					"type": "plain_text",
+					"text": "%s",
+					"emoji": true
+				}
+			},
+			{
+				"type": "context",
+				"elements": [
+					{
+						"type": "mrkdwn",
+						"text": "*あやたはわはやかゆ* 、2021/01/04"
+					}
+				]
+			},
+			{
+				"type": "header",
+				"text": {
+					"type": "plain_text",
+					"text": "信頼を裏切られた気分です。",
+					"emoji": true
+				}
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "plain_text",
+					"text": "購入してコンビニで支払いを済ませてからの対応が遅すぎませんか？他のネットショッピングサービスでは、例えばAmaz●nでは、購入の手続きが完了してすぐに完了のメールがきます。一方こちらのアプリではメールが届かないだけでなく支払いから一日経っても支払い待ちですと表示されるなど、対応の遅さが非常に目立ちます。金額の大きな買い物だからこそ、この対応の遅さはとても不安になります。アップルの公式だから大丈夫だろうと思って利用したのにとても残念です。ストアだけでなくアップル全体の信用の低下にもつながりかねないと思うので性急に対応すべきです。少なくとも今の状態のままならば私はこのストアをもう一度使いたいとは思えません。改善を期待します。",
+					"emoji": true
+				}
+			}
+		]
+	}`
+	payload := fmt.Sprintf(payloadTemplate, rating)
+	return payload
 }
