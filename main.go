@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type Feed struct {
@@ -17,8 +18,18 @@ type Feed struct {
 
 type Entry struct {
 	XMLNAME xml.Name `xml:"entry"`
+	Updated time.Time `xml:"updated"`
 	Title string `xml:"title"`
-	Updated string `xml:"updated"`
+	Content []Content `xml:"content"` 
+	Rating int `xml:"im:rating"`
+	Version string `xml:"im:version"`
+	Author string `xml:"author>name"`
+}
+
+type Content struct {
+	XMLNAME xml.Name `xml:"content"`
+	Type string `xml:"type,attr"`
+	Body string `xml:",innerxml"`
 }
 
 func main() {
@@ -26,7 +37,7 @@ func main() {
 	feed := fetchFeed(appId)
 	fmt.Printf("count of entries: %d", len(feed.Entries))
 	for _, entry := range feed.Entries {
-		fmt.Printf("[%s] %s\n",entry.Updated, entry.Title)
+		fmt.Printf(entry.toString())
 	}
 
 	//
@@ -78,4 +89,8 @@ func fetchFeed(appId string) Feed {
 		os.Exit(1)
 	}
 	return feed
+}
+
+func (e *Entry) toString() string {
+	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
 }
