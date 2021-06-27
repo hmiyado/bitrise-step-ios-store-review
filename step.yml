@@ -62,14 +62,14 @@ toolkit:
     package_name: github.com/hmiyado/bitrise-step-io-store-review
 
 inputs:
-  - example_step_input: Default Value - you can leave this empty if you want to
+  - ios_app_id:
     opts:
-      title: "Example Step Input"
-      summary: Summary. No more than 2-3 sentences.
+      title: "iOS App ID"
+      summary: iOS App ID
       description: |
-        Description of this input.
-
-        Can be Markdown formatted text.
+        Your iOS App ID can be found from app store url.
+        exmaple: https://apps.apple.com/jp/app/apple-store/id375380948
+        In this case, your app id is 375380948
       is_expand: true
       is_required: true
       value_options: []

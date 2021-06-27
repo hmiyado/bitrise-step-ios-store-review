@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -8,6 +9,17 @@ import (
 	"os/exec"
 	"strings"
 )
+
+type Feed struct {
+	XMLNAME xml.Name `xml:"feed"`
+	Entries []Entry `xml:"entry"`
+}
+
+type Entry struct {
+	XMLNAME xml.Name `xml:"entry"`
+	Title string `xml:"title"`
+	Updated string `xml:"updated"`
+}
 
 func main() {
 	appId := os.Getenv("ios_app_id")
@@ -30,8 +42,19 @@ func main() {
 		fmt.Printf("Failed to read response body from %s, error: %#v \n", appUrl, err)
 		os.Exit(1)
 	}
- 
-	fmt.Println(string(body))
+
+	feed := Feed{}
+	err = xml.Unmarshal(body, &feed)
+	if err != nil {
+		fmt.Printf("Fialed to parse xml of store review,\n%s\n", string(body))
+		os.Exit(1)
+	}
+	fmt.Printf("url: %s", appUrl)
+	fmt.Printf("body: %s", string(body))
+	fmt.Printf("count of entries: %d", len(feed.Entries))
+	for _, entry := range feed.Entries {
+		fmt.Printf("[%s] %s\n",entry.Updated, entry.Title)
+	}
 
 	//
 	// --- Step Outputs: Export Environment Variables for other Steps:

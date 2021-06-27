@@ -40,7 +40,7 @@ workflows:
             file if you would not specify another value.
           run_if: true
           inputs:
-            - ios_app_id: 375380948
+            - ios_app_id: "375380948"
       - script:
           inputs:
             - content: |
