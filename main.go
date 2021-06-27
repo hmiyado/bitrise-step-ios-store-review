@@ -2,12 +2,33 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"os/exec"
 )
 
 func main() {
-	fmt.Println("This is the value specified for the input 'example_step_input':", os.Getenv("example_step_input"))
+	app_id := os.Getenv("ios_app_id")
+	app_url := "https://itunes.apple.com/jp/rss/customerreviews/page=1/id=" + app_id + "/sortby=mostrecent/xml?urlDesc=/customerreviews/id=" + app_id + "/sortBy=mostRecent/json"
+
+	response, err := http.Get(app_url)
+	defer response.Body.Close()
+	if err != nil {
+		fmt.Printf("Failed to get review from %s, error: %#v\n", app_url, err)
+		os.Exit(1)
+	} 
+ 
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Printf("Failed to read response body from %s, error: %#v \n", app_url, err)
+		os.Exit(1)
+	}
+ 
+	fmt.Println(string(body))
+ 
+	//レスポンスのステータス
+	fmt.Println(string(response.Status))
 
 	//
 	// --- Step Outputs: Export Environment Variables for other Steps:

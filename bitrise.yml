@@ -40,7 +40,7 @@ workflows:
             file if you would not specify another value.
           run_if: true
           inputs:
-            - example_step_input: Example Step Input's value
+            - ios_app_id: 375380948
       - script:
           inputs:
             - content: |
