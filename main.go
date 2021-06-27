@@ -21,8 +21,8 @@ type Entry struct {
 	Updated time.Time `xml:"updated"`
 	Title string `xml:"title"`
 	Content []Content `xml:"content"` 
-	Rating int `xml:"im:rating"`
-	Version string `xml:"im:version"`
+	Rating int `xml:"rating"`
+	Version string `xml:"version"`
 	Author string `xml:"author>name"`
 }
 
@@ -100,13 +100,32 @@ func (e *Entry) toSlackPayloadJson() string {
 		rating = ":innocent:"
 	} else {
 		for i := 0; i < e.Rating; i++ {
-			rating += ":star: "
+			rating = rating + ":star: "
 		}	
 	}
+	rating = rating + "("+e.Version+")"
+
+	authorAndDate := fmt.Sprintf("*%s* 、%s", e.Author, e.Updated)
 
 	// https://app.slack.com/block-kit-builder/
 	payloadTemplate := `{
 		"blocks": [
+			{
+				"type": "header",
+				"text": {
+					"type": "plain_text",
+					"text": "%s",
+					"emoji": true
+				}
+			},
+			{
+				"type": "section",
+				"text": {
+					"type": "plain_text",
+					"text": "%s",
+					"emoji": true
+				}
+			},
 			{
 				"type": "section",
 				"text": {
@@ -120,28 +139,12 @@ func (e *Entry) toSlackPayloadJson() string {
 				"elements": [
 					{
 						"type": "mrkdwn",
-						"text": "*あやたはわはやかゆ* 、2021/01/04"
+						"text": "%s"
 					}
 				]
-			},
-			{
-				"type": "header",
-				"text": {
-					"type": "plain_text",
-					"text": "信頼を裏切られた気分です。",
-					"emoji": true
-				}
-			},
-			{
-				"type": "section",
-				"text": {
-					"type": "plain_text",
-					"text": "購入してコンビニで支払いを済ませてからの対応が遅すぎませんか？他のネットショッピングサービスでは、例えばAmaz●nでは、購入の手続きが完了してすぐに完了のメールがきます。一方こちらのアプリではメールが届かないだけでなく支払いから一日経っても支払い待ちですと表示されるなど、対応の遅さが非常に目立ちます。金額の大きな買い物だからこそ、この対応の遅さはとても不安になります。アップルの公式だから大丈夫だろうと思って利用したのにとても残念です。ストアだけでなくアップル全体の信用の低下にもつながりかねないと思うので性急に対応すべきです。少なくとも今の状態のままならば私はこのストアをもう一度使いたいとは思えません。改善を期待します。",
-					"emoji": true
-				}
 			}
 		]
 	}`
-	payload := fmt.Sprintf(payloadTemplate, rating)
+	payload := fmt.Sprintf(payloadTemplate, e.Title, rating, authorAndDate, e.Content[0].Body)
 	return payload
 }
