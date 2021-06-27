@@ -35,16 +35,16 @@ type Content struct {
 
 func main() {
 	appId := os.Getenv("ios_app_id")
-	feed := fetchFeed(appId)
+	feed := FetchFeed(appId)
 	PrintEntries(feed.Entries)
 
 	lastMinutes, _ := strconv.Atoi(os.Getenv("last_minutes"))
-	entries := feed.filterEntriesByLastMinutes(lastMinutes)
+	entries := feed.FilterEntriesByLastMinutes(lastMinutes)
 	PrintEntries(entries)
 	
 	webhookUrl := os.Getenv("slack_incoming_webhook_url")
 	for _, entry := range entries {
-		postToSlack(entry, webhookUrl)
+		PostToSlack(entry, webhookUrl)
 	}
 
 	// --- Exit codes:
@@ -54,7 +54,7 @@ func main() {
 	os.Exit(0)
 }
 
-func fetchFeed(appId string) Feed {
+func FetchFeed(appId string) Feed {
 	appUrl := "https://itunes.apple.com/jp/rss/customerreviews/page=1/id=" + appId + "/sortby=mostrecent/xml?urlDesc=/customerreviews/id=" + appId + "/sortBy=mostRecent/json"
 
 	response, err := http.Get(appUrl)
@@ -84,11 +84,11 @@ func fetchFeed(appId string) Feed {
 	return feed
 }
 
-func (e *Entry) toString() string {
+func (e *Entry) ToString() string {
 	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
 }
 
-func (f Feed) filterEntriesByLastMinutes(lastMinutes int) []Entry {
+func (f Feed) FilterEntriesByLastMinutes(lastMinutes int) []Entry {
 	entries := []Entry{}
 	lastValidTime := time.Now().Truncate(time.Duration(lastMinutes) * time.Minute)
 
@@ -100,12 +100,12 @@ func (f Feed) filterEntriesByLastMinutes(lastMinutes int) []Entry {
 	return entries
 }
 
-func postToSlack(entry Entry, webhookUrl string) {
-	payload := entry.toSlackPayloadJson()
+func PostToSlack(entry Entry, webhookUrl string) {
+	payload := entry.ToSlackPayloadJson()
 	http.Post(webhookUrl, "application/json", bytes.NewBuffer([]byte(payload)))
 }
 
-func (e *Entry) toSlackPayloadJson() string {
+func (e *Entry) ToSlackPayloadJson() string {
 	rating := ""
 	if e.Rating == 0 {
 		rating = ":innocent:"
@@ -163,6 +163,6 @@ func (e *Entry) toSlackPayloadJson() string {
 func PrintEntries(entries []Entry) {
 	fmt.Printf("count of entries: %d\n", len(entries))
 	for _, entry := range entries {
-		fmt.Printf(entry.toString())
+		fmt.Printf(entry.ToString())
 	}
 }
