@@ -10,13 +10,13 @@ import (
 )
 
 func main() {
-	app_id := os.Getenv("ios_app_id")
-	app_url := "https://itunes.apple.com/jp/rss/customerreviews/page=1/id=" + app_id + "/sortby=mostrecent/xml?urlDesc=/customerreviews/id=" + app_id + "/sortBy=mostRecent/json"
+	appId := os.Getenv("ios_app_id")
+	appUrl := "https://itunes.apple.com/jp/rss/customerreviews/page=1/id=" + appId + "/sortby=mostrecent/xml?urlDesc=/customerreviews/id=" + appId + "/sortBy=mostRecent/json"
 
-	response, err := http.Get(app_url)
+	response, err := http.Get(appUrl)
 	defer response.Body.Close()
 	if err != nil {
-		fmt.Printf("Failed to get review from %s, error: %#v\n", app_url, err)
+		fmt.Printf("Failed to get review from %s, error: %#v\n", appUrl, err)
 		os.Exit(1)
 	} 
 	responseStatus := string(response.Status)
@@ -27,7 +27,7 @@ func main() {
  
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		fmt.Printf("Failed to read response body from %s, error: %#v \n", app_url, err)
+		fmt.Printf("Failed to read response body from %s, error: %#v \n", appUrl, err)
 		os.Exit(1)
 	}
  
