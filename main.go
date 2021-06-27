@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -35,17 +36,21 @@ type Content struct {
 func main() {
 	appId := os.Getenv("ios_app_id")
 	feed := fetchFeed(appId)
-	fmt.Printf("count of entries: %d", len(feed.Entries))
+	fmt.Printf("count of entries: %d\n", len(feed.Entries))
 	for _, entry := range feed.Entries {
 		fmt.Printf(entry.toString())
 	}
 
+	lastMinutes, _ := strconv.Atoi(os.Getenv("last_minutes"))
+	entries := feed.filterEntriesByLastMinutes(lastMinutes)
+	fmt.Printf("count of valid entries: %d\n", len(entries))
+	for _, entry := range entries {
+		fmt.Printf(entry.toString())
+	}
+	
 	webhookUrl := os.Getenv("slack_incoming_webhook_url")
-	for i, entry := range feed.Entries {
+	for _, entry := range entries {
 		postToSlack(entry, webhookUrl)
-		if i > 3 {
-			break
-		}
 	}
 
 	// --- Exit codes:
@@ -87,6 +92,18 @@ func fetchFeed(appId string) Feed {
 
 func (e *Entry) toString() string {
 	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
+}
+
+func (f Feed) filterEntriesByLastMinutes(lastMinutes int) []Entry {
+	entries := []Entry{}
+	lastValidTime := time.Now().Truncate(time.Duration(lastMinutes) * time.Minute)
+
+	for _, entry := range f.Entries {
+		if entry.Updated.After(lastValidTime) {
+			entries = append(entries, entry)
+		}
+	}
+	return entries
 }
 
 func postToSlack(entry Entry, webhookUrl string) {
@@ -145,6 +162,6 @@ func (e *Entry) toSlackPayloadJson() string {
 			}
 		]
 	}`
-	payload := fmt.Sprintf(payloadTemplate, e.Title, rating, authorAndDate, e.Content[0].Body)
+	payload := fmt.Sprintf(payloadTemplate, e.Title, rating, e.Content[0].Body, authorAndDate)
 	return payload
 }

@@ -73,6 +73,13 @@ inputs:
       is_expand: true
       is_required: true
       value_options: []
+  - last_minutes: 1440
+    opts:
+      tilte: Last X minutes
+      description: |
+        Reviews of last X minutes will be post to Slack.
+        Default is 1440 (every day).
+        Example: if you set 30, reviews that is upadated in last 30 minutes are post to Slack.
   - slack_incoming_webhook_url: $SLACK_INCOMING_WEBHOOK_URL
     opts:
       title: Slack incoming webhook url
