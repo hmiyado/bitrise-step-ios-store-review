@@ -1,4 +1,4 @@
-# io-store-review
+# ios-store-review
 
 fetch new ios store reviews and post to slack
 

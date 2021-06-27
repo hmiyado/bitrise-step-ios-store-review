@@ -8,14 +8,14 @@
 # - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
 
 title: |-
-  io store review
+  ios store review
 summary: |
   get ios store reviews
 description: |
   fetch new ios store reviews and post to slack
-website: https://github.com/hmiyado/bitrise-step-io-store-review
-source_code_url: https://github.com/hmiyado/bitrise-step-io-store-review
-support_url: https://github.com/hmiyado/bitrise-step-io-store-review/issues
+website: https://github.com/hmiyado/bitrise-step-ios-store-review
+source_code_url: https://github.com/hmiyado/bitrise-step-ios-store-review
+support_url: https://github.com/hmiyado/bitrise-step-ios-store-review/issues
 host_os_tags:
   - osx-10.10
   - ubuntu-16.04
@@ -59,7 +59,7 @@ deps:
 
 toolkit:
   go:
-    package_name: github.com/hmiyado/bitrise-step-io-store-review
+    package_name: github.com/hmiyado/bitrise-step-ios-store-review
 
 inputs:
   - ios_app_id:
