@@ -1,12 +1,12 @@
 package main
 
 import (
+    "bytes"
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 )
@@ -40,20 +40,10 @@ func main() {
 		fmt.Printf(entry.toString())
 	}
 
-	//
-	// --- Step Outputs: Export Environment Variables for other Steps:
-	// You can export Environment Variables for other Steps with
-	//  envman, which is automatically installed by `bitrise setup`.
-	// A very simple example:
-	cmdLog, err := exec.Command("bitrise", "envman", "add", "--key", "EXAMPLE_STEP_OUTPUT", "--value", "the value you want to share").CombinedOutput()
-	if err != nil {
-		fmt.Printf("Failed to expose output with envman, error: %#v | output: %s", err, cmdLog)
-		os.Exit(1)
-	}
-	// You can find more usage examples on envman's GitHub page
-	//  at: https://github.com/bitrise-io/envman
+	webhookUrl := os.Getenv("slack_incoming_webhook_url")
+	payload := "{\"text\": \"Hello, world.\"}"
+	http.Post(webhookUrl, "application/json", bytes.NewBuffer([]byte(payload)))
 
-	//
 	// --- Exit codes:
 	// The exit code of your Step is very important. If you return
 	//  with a 0 exit code `bitrise` will register your Step as "successful".
