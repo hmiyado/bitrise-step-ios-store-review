@@ -6,7 +6,7 @@ app:
     - SLACK_INCOMING_WEBHOOK_URL: $SLACK_INCOMING_WEBHOOK_URL
     # If you want to share this step into a StepLib
     - BITRISE_STEP_ID: ios-store-review
-    - BITRISE_STEP_VERSION: "0.0.1"
+    - BITRISE_STEP_VERSION: "0.0.2"
     - BITRISE_STEP_GIT_CLONE_URL: https://github.com/hmiyado/bitrise-step-ios-store-review.git
     - MY_STEPLIB_REPO_FORK_GIT_URL: $MY_STEPLIB_REPO_FORK_GIT_URL
 
