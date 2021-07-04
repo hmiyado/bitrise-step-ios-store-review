@@ -62,7 +62,11 @@ func FetchFeed(appId string) Feed {
 }
 
 func (e *Entry) toString() string {
-	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
+	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.UpdatedString(), e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
+}
+
+func (e *Entry) UpdatedString() string {
+	return e.Updated.In(time.FixedZone("Asia/Tokyo", 9*60*60)).Format(time.RFC3339)
 }
 
 func PrintEntries(entries []Entry) {

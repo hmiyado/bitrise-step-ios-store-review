@@ -20,9 +20,9 @@ func (e *Entry) toSlackPayloadJson() string {
 			rating = rating + ":star: "
 		}	
 	}
-	rating = rating + "("+e.Version+")"
+	rating = rating + "(v" + e.Version + ")"
 
-	authorAndDate := fmt.Sprintf("*%s* 、%s", e.Author, e.Updated)
+	authorAndDate := fmt.Sprintf("*%s* 、%s", e.Author, e.UpdatedString())
 
 	// https://app.slack.com/block-kit-builder/
 	payloadTemplate := `{

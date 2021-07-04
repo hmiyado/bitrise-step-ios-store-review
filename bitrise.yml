@@ -34,6 +34,7 @@ workflows:
           run_if: true
           inputs:
             - ios_app_id: "375380948"
+            - last_minutes: 74000
 
   # ----------------------------------------------------------------
   # --- workflows to Share this step into a Step Library
