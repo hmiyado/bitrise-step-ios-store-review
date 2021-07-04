@@ -61,14 +61,14 @@ func FetchFeed(appId string) Feed {
 	return feed
 }
 
-func (e *Entry) ToString() string {
+func (e *Entry) toString() string {
 	return fmt.Sprintf("[%s]<V:%s><R:%d> %s -- %s\n%s\n", e.Updated, e.Version, e.Rating, e.Title, e.Author, e.Content[0].Body)
 }
 
 func PrintEntries(entries []Entry) {
 	fmt.Printf("count of entries: %d\n", len(entries))
 	for _, entry := range entries {
-		fmt.Printf(entry.ToString())
+		fmt.Printf(entry.toString())
 	}
 }
 
